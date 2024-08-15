@@ -14,6 +14,7 @@ def task():
             translate.label['text'] = text
         else:
             translate.label['text'] = ""
+    pass
 
 def start_task():
     task_thread = threading.Thread(target=task)
@@ -77,13 +78,6 @@ class SelectArea:
 
     
     def get_xy(self):
-        # geometry_info = root.geometry()
-        # width_height, x_y = geometry_info.split("+", 1)
-        # width, height = width_height.split("x", 1)
-        # x, y = x_y.split("+")
-        # left, right, top, bottom = x, x+width, y, y+height
-        # print(x,y,width,height)
-
         x = root.winfo_rootx()
         y = root.winfo_rooty()
 
@@ -102,8 +96,6 @@ class Translate:
         self.root = root
         self.width, self.height = 400, 100
         self.alpha = 0.7
-        self.label = tk.Label(root, text="None", fg="white", bg="black", font=("Arial", 14), wraplength=self.width)
-
         root.attributes("-fullscreen", False)
         # 设置窗口为顶层窗口，始终显示在最上层
         root.attributes("-topmost", True)
@@ -118,8 +110,16 @@ class Translate:
         root.configure(bg='black')
         self.make_window_transparent(root, self.alpha)
 
+        self.canvas = tk.Canvas(root, bg="black", highlightthickness=0)
+        root.update()
+        self.draw_red_border()
+        self.canvas.pack(fill=tk.BOTH, expand=tk.YES)
+
+        self.label = tk.Label(self.canvas, text="None", fg="white", bg="black", font=("Arial", 14), wraplength=self.width)
+
         # 创建标签以显示文字，设置文字颜色和字体
         self.label.pack(expand=True)
+        # label_window = self.canvas.create_window(0, 0, anchor="nw", window=self.label, width=self.canvas.winfo_width(), height=self.canvas.winfo_height())
 
         # 绑定鼠标事件
         self.label.bind("<Button-1>", self.start_move)
@@ -140,6 +140,25 @@ class Translate:
         x = event.x_root - x_offset
         y = event.y_root - y_offset
         self.root.geometry(f"+{x}+{y}")
+    
+    def draw_red_border(self):
+        # 获取 Canvas 的宽度和高度
+        root = self.root
+        canvas = self.canvas
+        width = root.winfo_width()
+        height = root.winfo_height()
+        # print(width, height)
+
+        # 清除之前的内容（如果有）
+        canvas.delete("border")
+
+        # 绘制四条红线，分别位于窗口的上下左右四个边框
+        line_width = 1
+        canvas.create_line(0, 0, width, 0, fill="red", width=line_width, tags="border")    # 顶部边框
+        canvas.create_line(0, 0, 0, height, fill="red", width=line_width, tags="border")   # 左侧边框
+        canvas.create_line(0, height-1, width, height-1, fill="red", width=line_width, tags="border")  # 底部边框
+        canvas.create_line(width-1, 0, width-1, height, fill="red", width=line_width, tags="border")   # 右侧边框
+
 
 
 if __name__ == '__main__':
