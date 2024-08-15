@@ -61,7 +61,7 @@ def run(left, right, top, bottom):
         image = cut_scrren()
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
         cut_image = cut_target_area(image, left, right, top, bottom)
-        resize_image = cut_scale(cut_image, 0.5)
+        resize_image = cut_scale(cut_image, 0.7)
         text = ocr(resize_image)
         text = text_process(text)
         translated = translator.translate(text, src='en', dest='zh-cn')
