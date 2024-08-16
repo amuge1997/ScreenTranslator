@@ -11,10 +11,8 @@ file_path = 'result.txt'
 # 创建翻译器对象
 translator = Translator()
 
-def cut_scrren():
-    # 截图整个屏幕
-    screenshot = pyautogui.screenshot()
-    # 保存截图
+def cut_scrren(left, right, top, bottom):
+    screenshot = pyautogui.screenshot(region=(left, top, right-left, bottom-top))
     screenshot_np = np.array(screenshot)
     return screenshot_np
 
@@ -58,9 +56,10 @@ def save_text(text):
 
 def run(left, right, top, bottom):
     try:
-        image = cut_scrren()
+        image = cut_scrren(left, right, top, bottom)
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-        cut_image = cut_target_area(image, left, right, top, bottom)
+        # cut_image = cut_target_area(image, left, right, top, bottom)
+        cut_image = image
         resize_image = cut_scale(cut_image, 0.7)
         text = ocr(resize_image)
         text = text_process(text)
