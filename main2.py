@@ -7,18 +7,31 @@ import time
 def task():
     while True:
         time.sleep(0.1)
-        left, right, top, bottom = select_area.get_xy()
+        if stop_event.is_set():
+            break
+        try:
+            select_area.root.winfo_exists()
+            left, right, top, bottom = select_area.get_xy()
+        except:
+            break
         text = ocr_and_translate.run(left, right, top, bottom)
-        # print(text)
-        if text is not None:
-            translate.label['text'] = text
-        else:
-            translate.label['text'] = ""
-    pass
+        if stop_event.is_set():
+            break
+        try:
+            translate.root.winfo_exists()
+            if text is not None:
+                translate.label['text'] = text
+            else:
+                translate.label['text'] = ""
+        except:
+            break
 
-def start_task():
-    task_thread = threading.Thread(target=task)
-    task_thread.start()
+
+root = tk.Tk()
+second_root = tk.Toplevel()
+stop_event = threading.Event()
+task_thread = threading.Thread(target=task)
+
 
 
 class SelectArea:
@@ -43,6 +56,7 @@ class SelectArea:
         self.canvas.bind("<B1-Motion>", self.move_window)
 
         root.bind("<Configure>", self.on_resize)
+        root.protocol("WM_DELETE_WINDOW", self.on_closing)
 
     def start_move(self, event):
         # 记录鼠标按下时的初始位置
@@ -57,6 +71,14 @@ class SelectArea:
     
     def on_resize(self, event):
         self.draw_red_border()
+    
+    def on_closing(self):
+        stop_event.set()  # 设置事件，通知线程停止
+        print("1")
+        task_thread.join()  # 等待线程结束
+        print("2")
+        self.root.quit()  # 退出主事件循环
+        self.root.destroy()  # 销毁主窗口
     
     def draw_red_border(self):
         # 获取窗口的宽度和高度
@@ -164,11 +186,9 @@ class Translate:
 
 
 if __name__ == '__main__':
-    root = tk.Tk()
-    second_root = tk.Toplevel()
     select_area = SelectArea(root)
     translate = Translate(second_root)
-    start_task()
+    task_thread.start()
     root.mainloop()
 
 
