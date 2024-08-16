@@ -1,2 +1,2 @@
 pytesseract + googletrans + tkinter
-![2](https://github.com/user-attachments/assets/3a8024c2-a25c-4dd3-8f7c-d9acb333ef3f)
+![3](https://github.com/user-attachments/assets/da5a85c6-8e92-46a2-bae7-a48819e27156)
