@@ -33,6 +33,7 @@ class SelectArea:
         self.start_x = None
         self.start_y = None
         self.rect = None
+        self.x_offset, self.y_offset = 0, 0
         self.canvas = tk.Canvas(self.root, cursor="cross", bg="black", highlightthickness=0)
         self.draw_red_border()
         self.canvas.pack(fill=tk.BOTH, expand=tk.YES)
@@ -45,14 +46,13 @@ class SelectArea:
 
     def start_move(self, event):
         # 记录鼠标按下时的初始位置
-        global x_offset, y_offset
-        x_offset = event.x
-        y_offset = event.y
+        self.x_offset = event.x
+        self.y_offset = event.y
 
     def move_window(self, event):
         # 移动窗口
-        x = event.x_root - x_offset
-        y = event.y_root - y_offset
+        x = event.x_root - self.x_offset
+        y = event.y_root - self.y_offset
         self.root.geometry(f"+{x}+{y}")
     
     def on_resize(self, event):
@@ -96,6 +96,8 @@ class Translate:
     def __init__(self, root) -> None:
         self.root = root
         self.width, self.height = 400, 100
+        self.x_offset = 0
+        self.y_offset = 0
         self.alpha = 0.7
         root.attributes("-fullscreen", False)
         # 设置窗口为顶层窗口，始终显示在最上层
@@ -132,14 +134,13 @@ class Translate:
 
     def start_move(self, event):
         # 记录鼠标按下时的初始位置
-        global x_offset, y_offset
-        x_offset = event.x
-        y_offset = event.y
+        self.x_offset = event.x
+        self.y_offset = event.y
 
     def move_window(self, event):
         # 移动窗口
-        x = event.x_root - x_offset
-        y = event.y_root - y_offset
+        x = event.x_root - self.x_offset
+        y = event.y_root - self.y_offset
         self.root.geometry(f"+{x}+{y}")
     
     def draw_red_border(self):
