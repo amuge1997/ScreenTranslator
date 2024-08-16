@@ -28,6 +28,7 @@ class SelectArea:
         self.root.config(bg="black")
         root.geometry(f"{400}x{100}")
         root.attributes("-topmost", True)
+        root.title("Screen Translator")
         root.update()
         self.start_x = None
         self.start_y = None
